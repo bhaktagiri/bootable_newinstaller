@@ -7,7 +7,7 @@
 # Yu Chen          <yuchen@tsinghua.edu.cn>
 # Last updated 2016/08/07
 #
-# Last updated 2017/09/04
+# Last updated 2017/10/06
 #
 # License: GNU Public License
 # We explicitely grant the right to use the scripts
@@ -79,6 +79,7 @@ check_root()
 		blk=`basename $1`
 		[ ! -e /dev/block/$blk ] && ln $1 /dev/block
 		dev=/dev/block/$blk
+		blkid $dev | grep -q TYPE || return 1
 	else
 		dev=$1
 	fi
@@ -152,6 +153,9 @@ while :; do
        for device in ${ROOT:-/dev/[hmsv][dmr][0-9a-z]*}; do
                check_root $device && break 2
                mountpoint -q /mnt && umount /mnt
+	for device in ${ROOT:-/dev/[hmnsv][dmrv][0-9a-z]*}; do
+		check_root $device && break 2
+		mountpoint -q /mnt && umount /mnt
 	done
 	sleep 1
 	echo -n .
