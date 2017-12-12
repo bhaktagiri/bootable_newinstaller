@@ -37,6 +37,7 @@ LOCAL_SRC_FILES := editdisklbl/editdisklbl.c
 LOCAL_CFLAGS := -O2 -g -W -Wall -Werror# -D_LARGEFILE64_SOURCE
 LOCAL_STATIC_LIBRARIES := libdiskconfig_host_grub libcutils liblog
 edit_mbr := $(HOST_OUT_EXECUTABLES)/$(LOCAL_MODULE)
+UNSPARSER := $(HOST_OUT_EXECUTABLES)/simg2img
 include $(BUILD_HOST_EXECUTABLE)
 
 include $(CLEAR_VARS)
