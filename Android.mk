@@ -36,6 +36,25 @@ define build-squashfs-target
 endef
 endif
 
+CLR_RED=$(shell tput setaf 1)
+CLR_GRN=$(shell tput setaf 2)
+CLR_YLW=$(shell tput setaf 3)
+CLR_BLU=$(shell tput setaf 4)
+CLR_MAG=$(shell tput setaf 5)
+CLR_CYN=$(shell tput setaf 6)
+CLR_WHT=$(shell tput setaf 7)
+CLR_BOLD=$(shell tput bold)
+CLR_RST=$(shell tput sgr0)
+
+# Shell color defs:
+CL_RED="\033[31m"
+CL_GRN="\033[32m"
+CL_YLW="\033[33m"
+CL_BLU="\033[34m"
+CL_MAG="\033[35m"
+CL_CYN="\033[36m"
+CL_RST="\033[0m"
+
 initrd_dir := $(LOCAL_PATH)/initrd
 initrd_bin := \
 	$(initrd_dir)/init \
@@ -82,7 +101,26 @@ $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 		-no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot \
 		-input-charset utf-8 -V "Android-x86 LiveCD" -o $@ $^
 	$(hide) isohybrid --uefi $@ || echo -e "isohybrid not found.\nInstall syslinux 4.0 or higher if you want to build a usb bootable iso."
-	@echo -e "\n\n$@ is built successfully.\n\n"
+	@echo -e ${CL_CYN}""${CL_CYN}
+	@echo -e ${CL_CYN}"      ___           ___                   ___           ___      "${CL_CYN}
+	@echo -e ${CL_CYN}"     /\  \         /\__\      ___        /\  \         /\  \     "${CL_CYN}
+	@echo -e ${CL_CYN}"    /::\  \       /:/  /     /\  \      /::\  \       /::\  \    "${CL_CYN}
+	@echo -e ${CL_CYN}"   /:/\:\  \     /:/  /      \:\  \    /:/\ \  \     /:/\ \  \   "${CL_CYN}
+	@echo -e ${CL_CYN}"  /::\~\:\__\   /:/  /       /::\__\  _\:\~\ \  \   _\:\~\ \  \  "${CL_CYN}
+	@echo -e ${CL_CYN}" /:/\:\ \:\__\ /:/__/     __/:/\/__/ /\ \:\ \ \__\ /\ \:\ \ \__\ "${CL_CYN}
+	@echo -e ${CL_CYN}" \:\~\:\/:/  / \:\  \    /\/:/  /    \:\ \:\ \/__/ \:\ \:\ \/__/ "${CL_CYN}
+	@echo -e ${CL_CYN}"  \:\ \::/  /   \:\  \   \::/__/      \:\ \:\__\    \:\ \:\__\   "${CL_CYN}
+	@echo -e ${CL_CYN}"   \:\/:/  /     \:\  \   \:\__\       \:\/:/  /     \:\/:/  /   "${CL_CYN}
+	@echo -e ${CL_CYN}"    \::/__/       \:\__\   \/__/        \::/  /       \::/  /    "${CL_CYN}
+	@echo -e ${CL_CYN}"     ~~            \/__/                 \/__/         \/__/     "${CL_CYN}
+	@echo -e ${CL_CYN}""${CL_CYN}
+	@echo -e ${CL_CYN}"===========-Bliss-x86 Package Complete-==========="${CL_RST}
+	@echo -e ${CL_CYN}"Zip: "${CL_CYN} $(ISO_IMAGE)${CL_RST}
+	@echo -e ${CL_CYN}"Size:"${CL_CYN}" `ls -lah $(ISO_IMAGE) | cut -d ' ' -f 5`"${CL_RST}
+	@echo -e ${CL_CYN}"=================================================="${CL_RST}
+	@echo -e ${CL_CYN}"        Have A Truly Blissful Experience"          ${CL_RST}
+	@echo -e ${CL_CYN}"=================================================="${CL_RST}
+	@echo -e ""
 
 rpm: $(wildcard $(LOCAL_PATH)/rpm/*) $(BUILT_IMG)
 	@echo ----- Making an rpm ------
