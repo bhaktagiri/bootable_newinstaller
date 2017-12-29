@@ -88,6 +88,7 @@ check_root()
 		blk=`basename $1`
 		[ ! -e /dev/block/$blk ] && ln $1 /dev/block
 		dev=/dev/block/$blk
+		blkid $dev | grep -q TYPE || return 1
 	else
 		dev=$1
 	fi
@@ -166,7 +167,7 @@ echo -n Detecting Android-x86...2
 mount -t tmpfs tmpfs /android
 cd /android
 while :; do
-	for device in ${ROOT:-/dev/[hmnsv][dmrv][0-9a-z]*}; do
+	for device in ${ROOT:-/dev/[hmnsv][dmrv][0-9a-z]*} ${ROOT:-/dev/xvd[0-9a-z]*}; do
 		check_root $device && break 2
 		mountpoint -q /mnt && umount /mnt
 	done
@@ -232,7 +233,8 @@ if [ 0$DEBUG -gt 1 ]; then
 fi
 
 [ "$SETUPWIZARD" = "0" ] && echo "ro.setupwizard.mode=DISABLED" >> default.prop
-
+[ "$SLEEP" = "1" ] && echo "sleep.earlysuspend=1" >> default.prop
+[ "$DC2P" = "1" ] && echo "poweroff.doubleclick=1" >> default.prop
 [ -n "$DEBUG" ] && SWITCH=${SWITCH:-chroot}
 
 # We must disable mdev before switching to Android
