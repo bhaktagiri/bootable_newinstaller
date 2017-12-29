@@ -61,7 +61,7 @@ find_partition()
 
 list_disks()
 {
-	for b in /sys/block/[shv]d[a-z] /sys/block/mmcblk? /sys/block/nvme*; do
+	for b in /sys/block/[shv]d[a-z] /sys/block/xvd[a-z] /sys/block/mmcblk? /sys/block/nvme*; do
 		[ -d $b ] && echo $b
 	done
 }
@@ -420,7 +420,30 @@ install_to()
 			done
 		fi
 		cp -af /grub /hd
+		
+		d=0
+		while [ 1 ]; do
+			h=`echo $d | awk '{ printf("%c", $1+97) }'`
+			([ -d /sys/block/[shv]d$h/$1 ] || [ -d /sys/block/xvd$h/$1 ]) && break
+			d=$(($d+1))
+		done
+		
 		p=$(($p-1))
+		
+		disk="xvda"
+		
+		echo "Parameter=$1" > /dev/tty5
+		case "$1" in
+			xvd*)
+				p=$((`echo $1 | cut -b5-`-1));
+				disk=`echo $1 | cut -b-4`;
+				;;
+			*)
+				p=$((`echo $1 | cut -b4-`-1));
+				disk=`echo $1 | cut -b-3`;
+				;;
+		esac
+		
 		create_menulst $p
 		create_winitem $1 $d
 		rm -f /hd/boot/grub/stage1

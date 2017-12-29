@@ -91,6 +91,7 @@ check_root()
 		blk=`basename $1`
 		[ ! -e /dev/block/$blk ] && ln $1 /dev/block
 		dev=/dev/block/$blk
+		blkid $dev | grep -q TYPE || return 1
 	else
 		dev=$1
 	fi
