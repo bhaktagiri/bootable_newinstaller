@@ -88,6 +88,7 @@ check_root()
 		blk=`basename $1`
 		[ ! -e /dev/block/$blk ] && ln $1 /dev/block
 		dev=/dev/block/$blk
+		blkid $dev | grep -q TYPE || return 1
 	else
 		dev=$1
 	fi
@@ -154,7 +155,7 @@ done
 
 cd /
 while :; do
-	for device in ${ROOT:-/dev/[hmnsv][dmrv][0-9a-z]*}; do
+	for device in ${ROOT:-/dev/[hmnsv][dmrv][0-9a-z]*} ${ROOT:-/dev/xvd[0-9a-z]*}; do
 		check_root $device && break 2
 		mountpoint -q /mnt && umount /mnt
 	done
