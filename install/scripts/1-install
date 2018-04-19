@@ -212,6 +212,12 @@ format_fs()
 		ext4)
 			cmd="make_ext4fs -L"
 			;;
+		ext3) 
+			cmd="mke2fs -jL" 
+			;; 
+		ext2) 
+		    cmd="mke2fs -L" 
+		    ;; 
 		ntfs)
 			cmd="mkntfs -fL"
 			;;
