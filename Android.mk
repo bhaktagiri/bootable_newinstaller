@@ -79,7 +79,8 @@ BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img reco
 BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
 
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
-ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION).iso
+BRANCH := $(shell cd $(ANDROID_BUILD_TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
+ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_$(BRANCH).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
