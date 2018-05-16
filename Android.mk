@@ -80,7 +80,9 @@ BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_
 
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
 BRANCH := $(shell cd $(ANDROID_BUILD_TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
-ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_$(BRANCH).iso
+MESAB := $(shell cd $(ANDROID_BUILD_TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
+FWB := $(shell cd $(ANDROID_BUILD_TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
+ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_$(BRANCH)_$(MESAB)_$(FWB).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
