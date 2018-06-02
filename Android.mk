@@ -62,6 +62,7 @@ $(INITRD_RAMDISK): $(initrd_bin) $(systemimg) $(TARGET_INITRD_SCRIPTS) | $(ACP) 
 	$(if $(INSTALL_PREFIX),echo "INSTALL_PREFIX=$(INSTALL_PREFIX)" >> $(TARGET_INITRD_OUT)/scripts/00-ver)
 	$(if $(PREV_VERS),echo "PREV_VERS=\"$(PREV_VERS)\"" >> $(TARGET_INITRD_OUT)/scripts/00-ver)
 	$(MKBOOTFS) $(<D) $(TARGET_INITRD_OUT) | gzip -9 > $@
+	$(boot_cpy)
 
 INSTALL_RAMDISK := $(PRODUCT_OUT)/install.img
 INSTALLER_BIN := $(TARGET_INSTALLER_OUT)/sbin/efibootmgr
@@ -77,9 +78,8 @@ $(boot_dir): $(shell find $(LOCAL_PATH)/boot -type f | sort -r ) $(systemimg) $(
 	img=$@/boot/grub/efi.img; dd if=/dev/zero of=$$img bs=1M count=4; \
 	mkdosfs -n EFI $$img; mmd -i $$img ::boot; \
 	mcopy -si $$img $@/efi ::; mdel -i $$img ::efi/boot/*.cfg
-	$(boot_cpy)
 
-BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img ramdisk-recovery.img boot.img recovery.img Androidx86-Installv26.0003.exe) $(systemimg)
+BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img ramdisk-recovery.img boot.img recovery.img recovery.id Androidx86-Installv26.0003.exe) $(systemimg)
 BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
 
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
