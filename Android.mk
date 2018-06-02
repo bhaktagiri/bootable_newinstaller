@@ -79,7 +79,7 @@ $(boot_dir): $(shell find $(LOCAL_PATH)/boot -type f | sort -r ) $(systemimg) $(
 	mcopy -si $$img $@/efi ::; mdel -i $$img ::efi/boot/*.cfg
 	$(boot_cpy)
 
-BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img ramdisk-recovery.img boot.img recovery.img Changelog-$(BLISS_VERSION).txt Androidx86-Installv26.0003.exe) $(systemimg)
+BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img ramdisk-recovery.img boot.img recovery.img Androidx86-Installv26.0003.exe) $(systemimg)
 BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
 
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
