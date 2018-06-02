@@ -42,10 +42,13 @@ include $(LOCAL_PATH)/bliss/bliss_colors.mk
 initrd_dir := $(LOCAL_PATH)/initrd
 initrd_bin := \
 	$(initrd_dir)/init \
-	$(wildcard $(initrd_dir)/*/*)
+	$(wildcard $(initrd_dir)/*/*) \
 
 systemimg  := $(PRODUCT_OUT)/system.$(if $(MKSQUASHFS),sfs,img)
 $(if $(MKSQUASHFS),$(systemimg): | $(MKSQUASHFS))
+
+boot_cpy := \
+	$(hide) echo -e "making patched boot.img" | mkdir $(PRODUCT_OUT)/system/Magisk-v12.0 | cp -r $(ANDROID_BUILD_TOP)/magisk_x86/Magisk-v12.0/* $(PRODUCT_OUT)/system/Magisk-v12.0/ \
 
 TARGET_INITRD_OUT := $(PRODUCT_OUT)/initrd
 INITRD_RAMDISK := $(TARGET_INITRD_OUT).img
@@ -59,15 +62,12 @@ $(INITRD_RAMDISK): $(initrd_bin) $(systemimg) $(TARGET_INITRD_SCRIPTS) | $(ACP) 
 	$(if $(INSTALL_PREFIX),echo "INSTALL_PREFIX=$(INSTALL_PREFIX)" >> $(TARGET_INITRD_OUT)/scripts/00-ver)
 	$(if $(PREV_VERS),echo "PREV_VERS=\"$(PREV_VERS)\"" >> $(TARGET_INITRD_OUT)/scripts/00-ver)
 	$(MKBOOTFS) $(<D) $(TARGET_INITRD_OUT) | gzip -9 > $@
-	$(hide) echo -e "copying patched boot.img" | cp $(PRODUCT_OUT)/boot.img $(PRODUCT_OUT)/system/Magisk-v12.0
 
 INSTALL_RAMDISK := $(PRODUCT_OUT)/install.img
 INSTALLER_BIN := $(TARGET_INSTALLER_OUT)/sbin/efibootmgr
 $(INSTALL_RAMDISK): $(wildcard $(LOCAL_PATH)/install/*/* $(LOCAL_PATH)/install/*/*/*/*) $(INSTALLER_BIN) | $(MKBOOTFS)
 	$(if $(TARGET_INSTALL_SCRIPTS),mkdir -p $(TARGET_INSTALLER_OUT)/scripts; $(ACP) -p $(TARGET_INSTALL_SCRIPTS) $(TARGET_INSTALLER_OUT)/scripts)
 	$(MKBOOTFS) $(dir $(dir $(<D))) $(TARGET_INSTALLER_OUT) | gzip -9 > $@
-	$(hide) echo -e "making patched boot.img" | mkdir $(PRODUCT_OUT)/system/Magisk-v12.0 | cp -r $(ANDROID_BUILD_TOP)/magisk_x86/Magisk-v12.0/* $(PRODUCT_OUT)/system/Magisk-v12.0/
-
 
 boot_dir := $(PRODUCT_OUT)/boot
 $(boot_dir): $(shell find $(LOCAL_PATH)/boot -type f | sort -r ) $(systemimg) $(INSTALL_RAMDISK) $(GENERIC_X86_CONFIG_MK) | $(ACP)
@@ -77,8 +77,9 @@ $(boot_dir): $(shell find $(LOCAL_PATH)/boot -type f | sort -r ) $(systemimg) $(
 	img=$@/boot/grub/efi.img; dd if=/dev/zero of=$$img bs=1M count=4; \
 	mkdosfs -n EFI $$img; mmd -i $$img ::boot; \
 	mcopy -si $$img $@/efi ::; mdel -i $$img ::efi/boot/*.cfg
+	$(boot_cpy)
 
-BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img recovery.img Androidx86-Installv26.0003.exe) $(systemimg)
+BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img ramdisk-recovery.img boot.img recovery.img Changelog-$(BLISS_VERSION).txt Androidx86-Installv26.0003.exe) $(systemimg)
 BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
 
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
