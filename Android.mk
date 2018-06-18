@@ -45,7 +45,6 @@ initrd_bin := \
 	$(wildcard $(initrd_dir)/*/*) \
 
 systemimg  := $(PRODUCT_OUT)/system.$(if $(MKSQUASHFS),sfs,img)
-$(if $(MKSQUASHFS),$(systemimg): | $(MKSQUASHFS))
 
 boot_cpy := \
 	$(hide) echo -e "making patched boot.img" | mkdir $(PRODUCT_OUT)/system/Magisk-v12.0 | cp -r $(ANDROID_BUILD_TOP)/magisk_x86/Magisk-v12.0/* $(PRODUCT_OUT)/system/Magisk-v12.0/ \
