@@ -213,7 +213,7 @@ format_fs()
 	choose "Choose filesystem" "Please select a filesystem to format $1:"
 	case "$choice" in
 		ext4)
-			cmd="make_ext4fs -L"
+			cmd="mkfs.ext4 -L"
 			;;
 		ntfs)
 			cmd="mkntfs -fL"
@@ -253,9 +253,9 @@ create_menulst()
 	[ -n "$VESA" ] && vga=" vga=788 modeset=0"
 	echo -e "${GRUB_OPTIONS:-default=0\ntimeout=6\nsplashimage=/grub/android-x86.xpm.gz\n}root (hd0,$1)\n" > $menulst
 
-	create_entry "$OS_TITLE $VER" quiet $cmdline
-	create_entry "$OS_TITLE $VER (Debug mode)" $cmdline DEBUG=2
-	create_entry "$OS_TITLE $VER (Debug nomodeset)" nomodeset $cmdline DEBUG=2
+	create_entry "$OS_TITLE $VER" quiet $cmdline androidboot.hardware=android_x86_64
+	create_entry "$OS_TITLE $VER (Debug mode)" $cmdline DEBUG=2 androidboot.hardware=android_x86_64
+	create_entry "$OS_TITLE $VER (Debug nomodeset)" nomodeset $cmdline DEBUG=2 androidboot.hardware=android_x86_64
 	create_entry "$OS_TITLE $VER (Debug video=LVDS-1:d)" video=LVDS-1:d $cmdline DEBUG=2
 }
 
@@ -319,7 +319,7 @@ create_data_img()
 	if [ $? -eq 0 ]; then
 		if create_img 2048 data.img; then
 			losetup /dev/loop6 data.img
-			make_ext4fs -L /data /dev/loop6 > /dev/tty6
+			mkfs.ext4 -L /data /dev/loop6 > /dev/tty6
 		fi
 		[ $? -ne 0 ] && dialog --msgbox "\n Failed to create data.img." 7 33
 	else
