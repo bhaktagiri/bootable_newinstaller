@@ -208,12 +208,12 @@ convert_fs()
 format_fs()
 {
 	local cmd
-	echo -e '"Do not format" ""\next4 ""\nntfs ""\nfat32 ""' > $menufile
+	echo -e '"Do not re-format" ""\next4 ""\nntfs ""\nfat32 ""' > $menufile
 	set_answer_if_auto $FORCE_FORMAT
 	choose "Choose filesystem" "Please select a filesystem to format $1:"
 	case "$choice" in
 		ext4)
-			cmd="make_ext4fs -L"
+			cmd="mkfs.ext4 -L"
 			;;
 		ext3) 
 			cmd="mke2fs -jL" 
@@ -259,9 +259,9 @@ create_menulst()
 	[ -n "$VESA" ] && vga=" vga=788 modeset=0"
 	echo -e "${GRUB_OPTIONS:-default=0\ntimeout=6\nsplashimage=/grub/android-x86.xpm.gz\n}root (hd0,$1)\n" > $menulst
 
-	create_entry "$OS_TITLE $VER" quiet $cmdline
-	create_entry "$OS_TITLE $VER (Debug mode)" $cmdline DEBUG=2
-	create_entry "$OS_TITLE $VER (Debug nomodeset)" nomodeset $cmdline DEBUG=2
+	create_entry "$OS_TITLE $VER" quiet $cmdline androidboot.hardware=android_x86_64
+	create_entry "$OS_TITLE $VER (Debug mode)" $cmdline DEBUG=2 androidboot.hardware=android_x86_64
+	create_entry "$OS_TITLE $VER (Debug nomodeset)" nomodeset $cmdline DEBUG=2 androidboot.hardware=android_x86_64
 	create_entry "$OS_TITLE $VER (Debug video=LVDS-1:d)" video=LVDS-1:d $cmdline DEBUG=2
 }
 
@@ -325,7 +325,7 @@ create_data_img()
 	if [ $? -eq 0 ]; then
 		if create_img 2048 data.img; then
 			losetup /dev/loop6 data.img
-			make_ext4fs -L /data /dev/loop6 > /dev/tty6
+			mkfs.ext4 -L /data /dev/loop6 > /dev/tty6
 		fi
 		[ $? -ne 0 ] && dialog --msgbox "\n Failed to create data.img." 7 33
 	else
@@ -337,7 +337,7 @@ create_data_img()
 try_upgrade()
 {
 	[ -d $1 ] && return
-	PREV_VERS="$PREV_VERS 7.1-r2 7.1-r1 7.1-rc2 7.1-rc1 6.0-r3 6.0-r2 6.0-r1 6.0-rc2 6.0-rc1 5.1-rc1 4.4-r5 4.4-r4 4.4-r3 4.4-r2 4.4-r1 4.4-RC2 4.4-RC1 4.4-test 4.3-test 4.2-test 4.0-r1 4.0-RC2 4.0-RC1"
+	PREV_VERS="$PREV_VERS 8.1-rc1 7.1-r2 7.1-r1 7.1-rc2 7.1-rc1 6.0-r3 6.0-r2 6.0-r1 6.0-rc2 6.0-rc1 5.1-rc1 4.4-r5 4.4-r4 4.4-r3 4.4-r2 4.4-r1 4.4-RC2 4.4-RC1 4.4-test 4.3-test 4.2-test 4.0-r1 4.0-RC2 4.0-RC1"
 	for v in $PREV_VERS; do
 		local prev
 		if [ -d hd/$v ]; then

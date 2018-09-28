@@ -15,7 +15,7 @@
 ifneq ($(filter x86%,$(TARGET_ARCH)),)
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
-
+RELEASE_OS_TITLE := Bliss-OS
 include $(CLEAR_VARS)
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := rpm/qemu-android
@@ -82,9 +82,11 @@ BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img boot
 BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
 
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
-BRANCH := $(shell cd $(ANDROID_BUILD_TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
-MESAB := $(shell cd $(ANDROID_BUILD_TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
-FWB := $(shell cd $(ANDROID_BUILD_TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
+
+BRANCH := $(shell cd $(TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
+MESAB := $(shell cd $(TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
+FWB := $(shell cd $(TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
+
 ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_$(BRANCH)_$(MESAB)_$(FWB).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
@@ -94,8 +96,9 @@ $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	
 	$(GENISOIMG) -vJURT -b isolinux/isolinux.bin -c isolinux/boot.cat \
 		-no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot \
-		-input-charset utf-8 -V "Android-x86 LiveCD" -o $@ $^
+		-input-charset utf-8 -V "$(if $(RELEASE_OS_TITLE),$(RELEASE_OS_TITLE),Android-x86) LiveCD" -o $@ $^
 	$(hide) isohybrid --uefi $@ || echo -e "isohybrid not found.\nInstall syslinux 4.0 or higher if you want to build a usb bootable iso."
+	
 	@echo -e ${CL_CYN}""${CL_CYN}
 	@echo -e ${CL_CYN}"      ___           ___                   ___           ___      "${CL_CYN}
 	@echo -e ${CL_CYN}"     /\  \         /\__\      ___        /\  \         /\  \     "${CL_CYN}
@@ -116,6 +119,12 @@ $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo -e ${CL_CYN}"        Have A Truly Blissful Experience"          ${CL_RST}
 	@echo -e ${CL_CYN}"=================================================="${CL_RST}
 	@echo -e ""
+
+	# Generate Bliss Changelog
+	$(hide) ./vendor/bliss/tools/changelog
+	$(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/Changelog-$(BLISS_VERSION).txt
+	
+	@echo -e "\n\n$@ is built successfully.\n\n"
 
 # Generate Bliss Changelog
 	$(hide) ./vendor/bliss/tools/changelog
