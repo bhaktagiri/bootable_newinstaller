@@ -46,9 +46,6 @@ initrd_bin := \
 
 systemimg  := $(PRODUCT_OUT)/system.$(if $(MKSQUASHFS),sfs,img)
 
-boot_cpy := \
-	$(hide) echo -e "making patched boot.img" | mkdir $(PRODUCT_OUT)/system/Magisk-v12.0 | cp -r $(ANDROID_BUILD_TOP)/magisk_x86/Magisk-v12.0/* $(PRODUCT_OUT)/system/Magisk-v12.0/ \
-
 TARGET_INITRD_OUT := $(PRODUCT_OUT)/initrd
 INITRD_RAMDISK := $(TARGET_INITRD_OUT).img
 $(INITRD_RAMDISK): $(initrd_bin) $(systemimg) $(TARGET_INITRD_SCRIPTS) | $(ACP) $(MKBOOTFS)
@@ -61,7 +58,6 @@ $(INITRD_RAMDISK): $(initrd_bin) $(systemimg) $(TARGET_INITRD_SCRIPTS) | $(ACP) 
 	$(if $(INSTALL_PREFIX),echo "INSTALL_PREFIX=$(INSTALL_PREFIX)" >> $(TARGET_INITRD_OUT)/scripts/00-ver)
 	$(if $(PREV_VERS),echo "PREV_VERS=\"$(PREV_VERS)\"" >> $(TARGET_INITRD_OUT)/scripts/00-ver)
 	$(MKBOOTFS) $(<D) $(TARGET_INITRD_OUT) | gzip -9 > $@
-	$(boot_cpy)
 
 INSTALL_RAMDISK := $(PRODUCT_OUT)/install.img
 INSTALLER_BIN := $(TARGET_INSTALLER_OUT)/sbin/efibootmgr
