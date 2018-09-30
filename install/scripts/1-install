@@ -254,6 +254,7 @@ create_menulst()
 	echo -e "${GRUB_OPTIONS:-default=0\ntimeout=6\nsplashimage=/grub/android-x86.xpm.gz\n}root (hd0,$1)\n" > $menulst
 
 	create_entry "$OS_TITLE $VER" quiet $cmdline androidboot.hardware=android_x86_64
+	create_entry "$OS_TITLE $VER (Legacy modprobe mode)" $cmdline androidboot.hardware=android_x86_64 AUTO_LOAD=old
 	create_entry "$OS_TITLE $VER (Debug mode)" $cmdline DEBUG=2 androidboot.hardware=android_x86_64
 	create_entry "$OS_TITLE $VER (Debug nomodeset)" nomodeset $cmdline DEBUG=2 androidboot.hardware=android_x86_64
 	create_entry "$OS_TITLE $VER (Debug video=LVDS-1:d)" video=LVDS-1:d $cmdline DEBUG=2
