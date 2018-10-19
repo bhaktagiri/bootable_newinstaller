@@ -83,7 +83,7 @@ BRANCH := $(shell cd $(TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' 
 MESAB := $(shell cd $(TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
 FWB := $(shell cd $(TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
 
-ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_$(BRANCH)_$(MESAB)_$(FWB).iso
+ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_$(TARGET_ARCH)_k-$(BRANCH)_m-$(MESAB)_f-$(FWB).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
