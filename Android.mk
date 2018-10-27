@@ -129,23 +129,11 @@ rpm: $(wildcard $(LOCAL_PATH)/rpm/*) $(BUILT_IMG)
 		-D"_topdir $$OUT/rpm" -D"_sourcedir $$OUT" -D"systemimg $(notdir $(systemimg))" -D"ver $(VER)" -D"epoch $$EPOCH" \
 		$(if $(BUILD_NAME_VARIANT),-D"name $(BUILD_NAME_VARIANT)") \
 		-D"install_prefix $(if $(INSTALL_PREFIX),$(INSTALL_PREFIX),android-$(VER))" $(filter %.spec,$^); \
-	mv $$OUT/rpm/RPMS/*/*.rpm $$OUT 
-	
-VERSION_FILE=$(LOCAL_PATH)/otoinit/version
-UPDATE_LIST=$(LOCAL_PATH)/otoinit/update.list
-UPDATE=BlissOS
-VERSION := $(shell cat $(VERSION_FILE)|awk '/BlissOS/{print $$2;}')
+	mv $$OUT/rpm/RPMS/*/*.rpm $$OUT
 
-UPDATE_IMG:= $(addprefix $(PRODUCT_OUT)/, $(shell cat $(UPDATE_LIST)))
-UPDATE_ZIP := $(PRODUCT_OUT)/$(UPDATE)_$(VERSION).zip
-$(UPDATE_ZIP): $(VERSION_FILE) $(UPDATE_LIST) $(ISO_IMAGE)
-	$(hide) rm -rf $@
-	$(hide) zip -qj $@ $(UPDATE_IMG) $(VERSION_FILE) $(UPDATE_LIST)
-
-.PHONY: iso_img usb_img efi_img rpm update_zip
+.PHONY: iso_img usb_img efi_img rpm
 iso_img: $(ISO_IMAGE)
 usb_img: $(ISO_IMAGE)
 efi_img: $(ISO_IMAGE)
-update_zip:$(UPDATE_ZIP)
 
 endif
