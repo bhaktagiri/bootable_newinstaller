@@ -162,6 +162,7 @@ for c in `cat /proc/cmdline`; do
 	esac
 done
 
+echo -n Detecting Android-x86...2
 mount -t tmpfs tmpfs /android
 cd /android
 while :; do
@@ -172,7 +173,7 @@ while :; do
 	sleep 1
 	echo -n .
 done
-
+echo -n Detecting Android-x86...3
 ln -s mnt/$SRC /src
 ln -s android/system /
 ln -s ../system/lib/firmware ../system/lib/modules /lib
@@ -180,6 +181,8 @@ ln -s ../system/lib/firmware ../system/lib/modules /lib
 if [ -n "$INSTALL" ]; then
 	zcat /src/install.img | ( cd /; cpio -iud > /dev/null )
 fi
+
+echo -n Detecting Android-x86...4
 
 if [ -x system/bin/ln -a \( -n "$DEBUG" -o -n "$BUSYBOX" \) ]; then
 	mv /bin /lib .
@@ -190,6 +193,7 @@ if [ -x system/bin/ln -a \( -n "$DEBUG" -o -n "$BUSYBOX" \) ]; then
 	ln -s android/bin android/lib android/sbin /
 	hash -r
 fi
+
 
 # load scripts
 for s in `ls /scripts/* /src/scripts/*`; do
@@ -211,6 +215,7 @@ fi
 
 [ -n "$INSTALL" ] && do_install
 
+update_detect
 load_modules
 mount_data
 mount_sdcard
