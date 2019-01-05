@@ -486,6 +486,7 @@ install_to()
 		[ -s efi/boot/grub/grubenv ] || ( printf %-1024s "# GRUB Environment Block%" | sed 's/k%/k\n/; s/   /###/g' > efi/boot/grub/grubenv )
 
 		echo -e 'set timeout=5\nset debug_mode="(DEBUG mode)"' > $grubcfg
+		echo -e 'set timeout=5\nset autoload_old="(Old Modprobe mode)"' > $grubcfg
 		# Our grub-efi doesn't support ntfs directly.
 		# Copy boot files to ESP so grub-efi could read them
 		if [ "$fs" = "fuseblk" ]; then
