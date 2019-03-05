@@ -180,6 +180,8 @@ done
 ln -s mnt/$SRC /src
 ln -s android/system /
 ln -s ../system/lib/firmware ../system/lib/modules /lib
+mkdir -p /lib/modules
+ln -s /system/lib/modules /lib/modules/`uname -r`
 
 if [ -n "$INSTALL" ]; then
 	zcat /src/install.img | ( cd /; cpio -iud > /dev/null )
