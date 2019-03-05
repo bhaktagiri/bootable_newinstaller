@@ -169,6 +169,8 @@ cd /android
 ln -s mnt/$SRC /src
 ln -s android/system /
 ln -s ../system/lib/firmware ../system/lib/modules /lib
+mkdir -p /lib/modules
+ln -s /system/lib/modules /lib/modules/`uname -r`
 
 mkdir /apex
 if [ -d system/apex/com.android.runtime.debug ]; then
