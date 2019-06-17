@@ -89,9 +89,14 @@ GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,geniso
 
 BRANCH := $(shell cd $(TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
 MESAB := $(shell cd $(TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
+
+DRMGRALLOC := $(shell cd $(TOP)/external/drm_gralloc ; git name-rev --name-only HEAD | cut -d '/' -f3)
+DRMHWCOMPOSER := $(shell cd $(TOP)/external/drm_hwcomposer ; git name-rev --name-only HEAD | cut -d '/' -f3)
+LIBDRM := $(shell cd $(TOP)/external/libdrm ; git name-rev --name-only HEAD | cut -d '/' -f3)
+
 FWB := $(shell cd $(TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
 
-ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)-$(shell date +%H%M)_$(TARGET_ARCH)_k-$(BRANCH)_m-$(MESAB)_f-$(FWB).iso
+ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)-$(shell date +%H%M)_$(TARGET_ARCH)_k-$(BRANCH)_m-$(MESAB)_ld-$(LIBDRM)_dg-$(DRMGRALLOC)_dh-$(DRMHWCOMPOSER).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
