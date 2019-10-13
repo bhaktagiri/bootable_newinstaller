@@ -213,7 +213,7 @@ format_fs()
 	choose "Choose filesystem" "Please select a filesystem to format $1:"
 	case "$choice" in
 		ext4)
-			cmd="mkfs.ext3 -L"
+			cmd="mkfs.ext4 -L"
 			;;
 		ntfs)
 			cmd="mkntfs -fL"
@@ -231,7 +231,7 @@ format_fs()
 		$cmd Android-x86 /dev/$1 | awk '{
 			# FIXME: very imprecise progress
 			if (match($0, "done"))
-				printf("%d\n", i+=33)
+				printf("%d\n", i+=20)
 		}' | progress_bar "Formatting" "Formatting partition $1..."
 		convert_fs $1
 	elif blkid /dev/$1 | grep -q ext[23]; then
@@ -334,7 +334,7 @@ try_upgrade()
 	[ -d $1 ] && return
 
 	for d in hd/*; do
-		[ -e "$d"/ramdisk.img -a -n "`ls "$d"/system* 2> /dev/null`" ] && echo \"`basename $d`\" \"\"
+		[ -n "`ls "$d"/system* 2> /dev/null`" ] && echo \"`basename $d`\" \"\"
 	done | sort -r > $menufile
 
 	count=`wc -l < $menufile`
@@ -507,7 +507,7 @@ install_to()
 	else
 		sysimg="mnt/$SRC/system.*"
 	fi
-	files="mnt/$SRC/kernel mnt/$SRC/initrd.img mnt/$SRC/$RAMDISK $sysimg"
+	files="mnt/$SRC/kernel mnt/$SRC/initrd.img $sysimg"
 	size=0
 	for s in `du -sk $files | awk '{print $1}'`; do
 		size=$(($size+$s))
