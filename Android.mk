@@ -85,6 +85,10 @@ $(boot_dir): $(shell find $(LOCAL_PATH)/boot -type f | sort -r) $(isolinux_files
 BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,ramdisk.img initrd.img install.img Androidx86-Installv26.0003.exe) $(systemimg)
 BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
 
+ifeq ($(BOARD_SLOT_AB_ENABLE),true)
+BUILT_IMG += $(PRODUCT_OUT)/recovery.img
+endif
+
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
 
 BRANCH := $(shell cd $(TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
