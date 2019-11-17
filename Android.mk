@@ -82,7 +82,16 @@ BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,initrd.img install.img) $(systemimg)
 BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
 
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
-ISO_IMAGE := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-$(shell date +%Y%m%d%H%M).iso
+
+# Grab branch names
+KRNL := $(shell cd $(TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
+MSA := $(shell cd $(TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
+DG := $(shell cd $(TOP)/external/drm_gralloc ; git name-rev --name-only HEAD | cut -d '/' -f3)
+DHW := $(shell cd $(TOP)/external/drm_hwcomposer ; git name-rev --name-only HEAD | cut -d '/' -f3)
+LD := $(shell cd $(TOP)/external/libdrm ; git name-rev --name-only HEAD | cut -d '/' -f3)
+FW := $(shell cd $(TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
+
+ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)-$(TARGET_PRODUCT)-$(shell date +%Y%m%d%H%M)_k-$(KRNL)_m-$(MSA)_ld-$(LD)_dg-$(DG)_dh-$(DHW).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
