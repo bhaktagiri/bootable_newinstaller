@@ -15,7 +15,7 @@
 ifneq ($(filter x86%,$(TARGET_ARCH)),)
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
-
+RELEASE_OS_TITLE := Bliss-OS
 include $(CLEAR_VARS)
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := rpm/qemu-android
@@ -34,6 +34,9 @@ define build-squashfs-target
 	$(hide) $(MKSQUASHFS) $(1) $(2) -noappend -comp gzip
 endef
 endif
+
+# Bliss Build Colors
+include $(LOCAL_PATH)/bliss/bliss_colors.mk
 
 initrd_dir := $(LOCAL_PATH)/initrd
 initrd_bin := \
@@ -101,6 +104,32 @@ $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 		-no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot \
 		-input-charset utf-8 -V "$(if $(RELEASE_OS_TITLE),$(RELEASE_OS_TITLE),Android-x86) LiveCD" -o $@ $^
 	$(hide) isohybrid --uefi $@ || echo -e "isohybrid not found.\nInstall syslinux 4.0 or higher if you want to build a usb bootable iso."
+	
+	@echo -e ${CL_CYN}""${CL_CYN}
+	@echo -e ${CL_CYN}"      ___           ___                   ___           ___      "${CL_CYN}
+	@echo -e ${CL_CYN}"     /\  \         /\__\      ___        /\  \         /\  \     "${CL_CYN}
+	@echo -e ${CL_CYN}"    /::\  \       /:/  /     /\  \      /::\  \       /::\  \    "${CL_CYN}
+	@echo -e ${CL_CYN}"   /:/\:\  \     /:/  /      \:\  \    /:/\ \  \     /:/\ \  \   "${CL_CYN}
+	@echo -e ${CL_CYN}"  /::\~\:\__\   /:/  /       /::\__\  _\:\~\ \  \   _\:\~\ \  \  "${CL_CYN}
+	@echo -e ${CL_CYN}" /:/\:\ \:\__\ /:/__/     __/:/\/__/ /\ \:\ \ \__\ /\ \:\ \ \__\ "${CL_CYN}
+	@echo -e ${CL_CYN}" \:\~\:\/:/  / \:\  \    /\/:/  /    \:\ \:\ \/__/ \:\ \:\ \/__/ "${CL_CYN}
+	@echo -e ${CL_CYN}"  \:\ \::/  /   \:\  \   \::/__/      \:\ \:\__\    \:\ \:\__\   "${CL_CYN}
+	@echo -e ${CL_CYN}"   \:\/:/  /     \:\  \   \:\__\       \:\/:/  /     \:\/:/  /   "${CL_CYN}
+	@echo -e ${CL_CYN}"    \::/__/       \:\__\   \/__/        \::/  /       \::/  /    "${CL_CYN}
+	@echo -e ${CL_CYN}"     ~~            \/__/                 \/__/         \/__/     "${CL_CYN}
+	@echo -e ${CL_CYN}""${CL_CYN}
+	@echo -e ${CL_CYN}"===========-Bliss-x86 Package Complete-==========="${CL_RST}
+	@echo -e ${CL_CYN}"Zip: "${CL_CYN} $(ISO_IMAGE)${CL_RST}
+	@echo -e ${CL_CYN}"Size:"${CL_CYN}" `ls -lah $(ISO_IMAGE) | cut -d ' ' -f 5`"${CL_RST}
+	@echo -e ${CL_CYN}"=================================================="${CL_RST}
+	@echo -e ${CL_CYN}"        Have A Truly Blissful Experience"          ${CL_RST}
+	@echo -e ${CL_CYN}"=================================================="${CL_RST}
+	@echo -e ""
+
+	# Generate Bliss Changelog
+	$(hide) ./vendor/bliss/tools/changelog
+	$(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/Changelog-$(BLISS_VERSION)-$(shell date +%Y%m%d%H%M).txt
+	
 	@echo -e "\n\n$@ is built successfully.\n\n"
 
 rpm: $(wildcard $(LOCAL_PATH)/rpm/*) $(BUILT_IMG)
