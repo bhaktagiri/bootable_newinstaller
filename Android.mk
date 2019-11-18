@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+BUILD_TOP := $(shell pwd)
 
 ifneq ($(filter x86%,$(TARGET_ARCH)),)
 LOCAL_PATH := $(call my-dir)
@@ -87,12 +88,12 @@ BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_
 GENISOIMG := $(if $(shell which xorriso 2> /dev/null),xorriso -as mkisofs,genisoimage)
 
 # Grab branch names
-KRNL := $(shell cd $(TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
-MSA := $(shell cd $(TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
-DG := $(shell cd $(TOP)/external/drm_gralloc ; git name-rev --name-only HEAD | cut -d '/' -f3)
-DHW := $(shell cd $(TOP)/external/drm_hwcomposer ; git name-rev --name-only HEAD | cut -d '/' -f3)
-LD := $(shell cd $(TOP)/external/libdrm ; git name-rev --name-only HEAD | cut -d '/' -f3)
-FW := $(shell cd $(TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
+KRNL := $(shell cd $(BUILD_TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
+MSA := $(shell cd $(BUILD_TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
+DG := $(shell cd $(BUILD_TOP)/external/drm_gralloc ; git name-rev --name-only HEAD | cut -d '/' -f3)
+DHW := $(shell cd $(BUILD_TOP)/external/drm_hwcomposer ; git name-rev --name-only HEAD | cut -d '/' -f3)
+LD := $(shell cd $(BUILD_TOP)/external/libdrm ; git name-rev --name-only HEAD | cut -d '/' -f3)
+FW := $(shell cd $(BUILD_TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
 
 ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)-$(TARGET_PRODUCT)-$(shell date +%Y%m%d%H%M)_k-$(KRNL)_m-$(MSA)_ld-$(LD)_dg-$(DG)_dh-$(DHW).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
