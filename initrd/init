@@ -43,10 +43,13 @@ if test x"$HAS_CTTY" != x"Yes"; then
 	if test -z "$DEBUG" || test -n "$INSTALL"; then
 		echo 0 0 0 0 > /proc/sys/kernel/printk
 	fi
-	# initialise /dev (first time)
-	mkdir -p /dev/block
+	# populate /dev
 	echo /sbin/mdev > /proc/sys/kernel/hotplug
 	mdev -s
+	sleep 3
+	# initialise /dev (first time)
+	mkdir -p /dev/block
+	echo 0 > /proc/sys/kernel/printk
 	# re-run this script with a controlling tty
 	exec env HAS_CTTY=Yes setsid cttyhack /bin/sh "$0" "$@"
 fi
@@ -165,7 +168,7 @@ done
 mount -t tmpfs tmpfs /android
 cd /android
 while :; do
-	for device in ${ROOT:-/dev/[hmnsv][dmrv][0-9a-z]*}; do
+	for device in ${ROOT:-/dev/[hmnsv][dmrv][0-9a-z]*} ${ROOT:-/dev/xvd[0-9a-z]*} ${ROOT:-/dev/nvme0n[0-9]p[0-9a-z]*}; do
 		check_root $device && break 2
 		mountpoint -q /mnt && umount /mnt
 	done
@@ -176,6 +179,8 @@ done
 ln -s mnt/$SRC /src
 ln -s android/system /
 ln -s ../system/lib/firmware ../system/lib/modules /lib
+mkdir -p /lib/modules
+ln -s /system/lib/modules /lib/modules/`uname -r`
 
 if [ -n "$INSTALL" ]; then
 	zcat /src/install.img | ( cd /; cpio -iud > /dev/null )
