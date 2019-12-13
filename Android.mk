@@ -94,7 +94,7 @@ DHW := $(shell cd $(BUILD_TOP)/external/drm_hwcomposer ; git name-rev --name-onl
 LD := $(shell cd $(BUILD_TOP)/external/libdrm ; git name-rev --name-only HEAD | cut -d '/' -f3)
 FW := $(shell cd $(BUILD_TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
  
-ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)-$(shell date +%Y%m%d%H%M)_k-$(KRNL)_m-$(MSA)_ld-$(LD)_dg-$(DG)_dh-$(DHW).iso
+ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_k-$(KRNL)_m-$(MSA)_ld-$(LD)_dg-$(DG)_dh-$(DHW).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
