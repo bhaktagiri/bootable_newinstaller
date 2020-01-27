@@ -129,10 +129,6 @@ $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo -e ${CL_CYN}"=================================================="${CL_RST} 
 	@echo -e "" 
 
-	# Generate Bliss Changelog 
-	$(hide) ./vendor/blissos/tools/changelog 
-	$(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/Changelog-$(BLISS_VERSION)-$(shell date +%Y%m%d%H%M).txt 
-
 	@echo -e "\n\n$@ is built successfully.\n\n"
 
 rpm: $(wildcard $(LOCAL_PATH)/rpm/*) $(BUILT_IMG)
