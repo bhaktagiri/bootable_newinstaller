@@ -94,8 +94,38 @@ DHW := $(shell cd $(BUILD_TOP)/external/drm_hwcomposer ; git name-rev --name-onl
 LD := $(shell cd $(BUILD_TOP)/external/libdrm ; git name-rev --name-only HEAD | cut -d '/' -f3)
 MG := $(shell cd $(BUILD_TOP)/external/minigbm ; git name-rev --name-only HEAD | cut -d '/' -f3)
 FW := $(shell cd $(BUILD_TOP)/device/generic/firmware ; git name-rev --name-only HEAD | cut -d '/' -f3)
+# Grab enabled extras
+ifeq ($(USE_GMS),true)
+GMS := "_gms"
+else
+GMS := ""
+endif
 
-ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_k-$(KRNL)_m-$(MSA)_ld-$(LD)_dg-$(DG)_dh-$(DHW)_mg-$(MG).iso
+ifeq ($(USE_FDROID),true)
+FDR := "_fdroid"
+else
+FDR := ""
+endif
+
+ifeq ($(USE_FOSS),true)
+FOS := "_foss"
+else
+FOS := ""
+endif
+
+ifeq ($(USE_HOUDINI),true)
+HOU := "_cros-hd"
+else
+HOU := ""
+endif
+
+ifeq ($(USE_WIDEVINE),true)
+WDV := "_cros-wv"
+else
+WDV := ""
+endif
+
+ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_k-$(KRNL)_m-$(MSA)_ld-$(LD)_dg-$(DG)_dh-$(DHW)_mg-$(MG)$(GMS)$(FDR)$(FOS)$(HOU)$(WDV).iso
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
 	$(hide) sed -i "s|\(Installation CD\)\(.*\)|\1 $(VER)|; s|CMDLINE|$(BOARD_KERNEL_CMDLINE)|" $</isolinux/isolinux.cfg
