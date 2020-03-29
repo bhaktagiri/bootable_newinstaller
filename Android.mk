@@ -124,7 +124,13 @@ else
 WDV := ""
 endif
 
-ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_k-$(KRNL)_m-$(MSA)_ld-$(LD)_dg-$(DG)_dh-$(DHW)_mg-$(MG)$(GMS)$(FDR)$(FOS)$(HOU)$(WDV).iso
+ifeq ($(IPTS_DRIVERS),true)
+IPT := "_ipts"
+else
+IPT := ""
+endif
+
+ISO_IMAGE := $(PRODUCT_OUT)/$(BLISS_VERSION)_k-$(KRNL)_m-$(MSA)_ld-$(LD)_dg-$(DG)_dh-$(DHW)_mg-$(MG)$(GMS)$(FDR)$(FOS)$(HOU)$(WDV)$(IPT).iso
 ISOHYBRID := LD_LIBRARY_PATH=$(LOCAL_PATH)/install/lib external/syslinux/bios/utils/isohybrid
 $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 	@echo ----- Making iso image ------
