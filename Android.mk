@@ -76,6 +76,7 @@ $(boot_dir): $(shell find $(LOCAL_PATH)/boot -type f | sort -r) $(isolinux_files
 	$(hide) rm -rf $@
 	$(ACP) -pr $(dir $(<D)) $@
 	$(ACP) -pr $(dir $(<D))../install/grub2/efi $@
+	$(ACP) -pr $(dir $(<D))../install/refind $@
 	$(ACP) $(isolinux_files) $@/isolinux
 	PATH="/sbin:/usr/sbin:/bin:/usr/bin"; \
 	img=$@/boot/grub/efi.img; dd if=/dev/zero of=$$img bs=1M count=4; \
