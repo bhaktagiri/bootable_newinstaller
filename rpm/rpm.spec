@@ -5,9 +5,8 @@ Release: %(echo %{ver} | cut -d- -f2)
 Epoch: %{epoch}
 Source1: kernel
 Source2: initrd.img
-Source3: ramdisk.img
-Source4: %{systemimg}
-Source5: qemu-android
+Source3: %{systemimg}
+Source4: qemu-android
 License: Apache Public License / GPLv2
 Group: Operating system/Android
 URL: http://www.android-x86.org
