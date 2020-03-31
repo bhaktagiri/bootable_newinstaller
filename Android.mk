@@ -85,6 +85,9 @@ $(boot_dir): $(shell find $(LOCAL_PATH)/boot -type f | sort -r) $(isolinux_files
 BUILT_IMG := $(addprefix $(PRODUCT_OUT)/,initrd.img install.img Androidx86-Installv28.5800.exe) $(systemimg)
 BUILT_IMG += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
 
+BUILT_RPM := $(addprefix $(PRODUCT_OUT)/,initrd.img ) $(systemimg)
+BUILT_RPM += $(if $(TARGET_PREBUILT_KERNEL),$(TARGET_PREBUILT_KERNEL),$(PRODUCT_OUT)/kernel)
+
 # Grab branch names
 KRNL := $(shell cd $(BUILD_TOP)/kernel ; git name-rev --name-only HEAD | cut -d '/' -f3)
 MSA := $(shell cd $(BUILD_TOP)/external/mesa ; git name-rev --name-only HEAD | cut -d '/' -f3)
@@ -167,7 +170,7 @@ $(ISO_IMAGE): $(boot_dir) $(BUILT_IMG)
 
 	@echo -e "\n\n$@ is built successfully.\n\n"
 
-rpm: $(wildcard $(LOCAL_PATH)/rpm/*) $(BUILT_IMG)
+rpm: $(wildcard $(LOCAL_PATH)/rpm/*) $(BUILT_RPM)
 	@echo ----- Making an rpm ------
 	OUT=$(abspath $(PRODUCT_OUT)); mkdir -p $$OUT/rpm/BUILD; rm -rf $$OUT/rpm/RPMS/*; $(ACP) $< $$OUT; \
 	echo $(VER) | grep -vq rc; EPOCH=$$((-$$? + `echo $(VER) | cut -d. -f1`)); \
